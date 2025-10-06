@@ -1,4 +1,5 @@
 Documentacion
+
 Forders:
 Realm-data <== Folder que contiene el data que se genero con realm
 redis-data <== Folder con el archivo que genero la aplicacion de redis
@@ -15,4 +16,5 @@ redis_setup <=== Archivo para ejecutar la logica o conexion para la base de dato
 tinydb_setup <== Archivo para ejecutar la logica o conexion para la base de datos de TinyDB ==>
 
 Enlace del Github = https://github.com/DorianGE/Aplicacion-de-rutinas-Mini-Proyecto-
+
 Enlace del video = (se actualizara el archivo con el video en el github)
