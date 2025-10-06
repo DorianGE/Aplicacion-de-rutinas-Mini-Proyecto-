@@ -1,0 +1,159 @@
+1.-Al momento de intentar de instalar el cliente de redis para python em salio el siguiente error: 
+   Fatal error in launcher: Unable to create process using '"C:\Users\DELL\AppData\Local\Programs\Python\Python313\python.exe"  
+   "C:\Users\DELL\AppData\Local\Programs\Python\Python313\Scripts\pip.exe" install redis':
+   El sistema no puede encontrar el archivo especificado. Esto es debido a que el instalador de python esta roto o mal configurado
+   En mi caso tuve que reinstalar python ya que estaba roto
+
+2.- Una vez solucionado esto en el cmd o powershell se ejecuto el siguiente comando: "pip install redis", esto como se dijo con anteriridad
+  para instalar el ciente para python, y una vez instalado el script se procedo al programa de redist a hacer los datos de la rutina
+
+3.-En el programa de redist se usaron los siguientes comandos:
+ Set Nombre_Habito "Lavar trastes"
+ Set Frecuencias "Usualmente"
+ Set Estado "Pendiente"
+ Es supongo algo basico pero lo puse porque es lo que venia en el collab, ademas eh de suponer que se pueden poner mas cosas, pero en este
+ caso solo voy a dejar esto para hacerlo "Simple"
+
+4.-para el archivo de redis_setup se realizo la conexion a redis y despues se declararo para que se puedan guardar los datos de la siguiente manera:
+ habit_data = {
+        "Id del Habito": habit_id,
+        "Nombre del habito": habit_name,
+        "Frecuencia":frecuency,
+        "estado": status
+ }
+ Esta fue la manera para actualizar los datos:
+ def update_habit_status(habit_id: int, New_status : str):
+    habit = read_habit(habit_id)
+    if habit:
+        habit["estado"] = New_status
+        client.set(f"habit:{habit_id}",json.dumps(habit))
+ Y esta para leer los datos:
+ def read_habit(habit_id: int):
+    data = client.get(f"habit:{habit_id}")
+    return json.loads(data) if data else None
+
+5.-Despues se instalo TinyDB, esto porque se esta usando el lenguaje python para el desarrollo de la aplicacion, y realm no tiene compatibilidad, ademas
+ de que realm no tiene compatibilidad con python, asi que para no complicar tanto se usara TinyDB, que al menos que hace la aplicacion va a funcionar, (ademas
+ de no saber de que esto cuente como objeto yo supongo que si), para la instalacion de TinyDB se uso el siguiente comando en el cmd:
+ pip install tinydb (Igualmente se realizara la instalacion y la generacion del archivo, mas no se va utilizar)
+
+6.-Despues para el archivo de tinydb_setup de eso se realizo una estructura similar como se hizo en el de redis:
+ Para guardar los datos:
+  def save_habit_T(habit_id: int, habit_name: str, frecuency: str, status: str = "Pendiente"):
+    habit_data = {
+       "Id de habito": habit_id,
+        "Nombre del habito": habit_name,
+        "Frecuencia": frecuency,
+        "Estado": status
+    }
+    db.insert(habit_data)
+    return True
+ Para leer los datos:
+ def read_habit_t(habit_id: int):
+    result = db.search(habit.id == habit_id)
+    if result:
+     return result[0] 
+    else:
+       print("No hay habitos disponibles")
+ Para actualizar los datos:
+ def update_habit_status_t(habit_id: int, New_status: str):
+   db.update({"Estado": New_status},habit.id == habit_id)
+
+7.-Despues de eso se realizo el menu, un menu usando el bucle while:
+ y estos fueron los comandos para el menu:
+ while True:
+ print("------MENU-----")
+ print("1.-Crear un habito")
+ print("2.-Leer el habito")
+ print("3.-Actulizar estado de un habito")
+ print("4.-Salir")
+
+ opcion = int(input("Selecciona cual va usar:"))
+ limpiar_pantalla()
+
+ if opcion == 1:
+  Crear_habito()
+
+ elif opcion == 2:
+  Leer_Habito()
+
+ elif opcion == 3:
+   Actualizar_Estado()
+
+ elif opcion == 4:
+   print("Saliendo de la aplicacion . . .")
+   break
+ 
+ else:
+  print("Eliga una opcion de las que se muestra en pantalla.")
+
+8.-para las funciones de actualizar el estatus guardar el habito y ver los habitos se uso los siguientes:
+  def Crear_habito():
+ Id_habit = int(input("Ingrese el numero de id del habito: "))
+ Habit = input("Ingrese el habito: ")
+ Frecuencia = input("Ingrese con la frecuencia que se hace(Diario/semanal/mensual): ")
+
+ save_habit(habit_id= Id_habit,habit_name=Habit, frecuency=Frecuencia)
+ save_habit_T(habit_id=Id_habit, habit_name=Habit, frecuency=Frecuencia)
+
+ def Actualizar_Estado():
+  Id_Habit = int(input("Ingrese el Id de habito que desea modificar: "))
+  Estatus_Nuevo = input("Ingrese el estado a actualizr(Pendiente/Completado): ")
+
+  update_habit_status(Id_Habit, New_status=Estatus_Nuevo)
+  update_habit_status_t(Id_Habit,New_status=Estatus_Nuevo)
+
+ def Leer_Habito():
+ Id_Habito = int(input("Ingrese el Id del habito que desea ver: "))
+
+ Habito = read_habit(habit_id= Id_Habito)
+ Habito_T = read_habit_t(habit_id= Id_Habito)
+
+ print("habito en Redist" + Habito)
+ print("habito encontrado en tiny: "+ Habito_T)
+
+9.-Al hacer una prueba de que la aplicacion este en funcionamiento, al momento de ingresar los primeros datos (Id, nombre, y frecuencia) dio el siguiente
+ error:
+ Traceback (most recent call last):
+  File "c:\Users\DELL\Desktop\MiniProyecto\app.py", line 43, in <module>    
+    Crear_habito()
+    ~~~~~~~~~~~~^^
+  File "c:\Users\DELL\Desktop\MiniProyecto\app.py", line 10, in Crear_habito
+    save_habit(habit_id= Id_habit,habit_name=Habit, frecuency=Frecuencia)   
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   
+  File "c:\Users\DELL\Desktop\MiniProyecto\redis_setup.py", line 13, in save_habit
+    client.set(f"habit:{habit_id: int}",json.dumps(habit_data))
+                       ^^^^^^^^^^^^^^^
+ ValueError: Invalid format specifier ' int' for object of type 'int'
+ Esto se debio a que estaba especificado en int algo asi: client.set(f"habit:{habit_id: int}",json.dumps(habit_data)) esto se soluciono
+ y quedo algo asi: client.set(f"habit:{habit_id}",json.dumps(habit_data))
+
+10.-Al darle el habito esto la aplicacion ejecutando da un error que es el siguiente:
+  Traceback (most recent call last):
+  File "c:\Users\DELL\Desktop\MiniProyecto\app.py", line 46, in <module>   
+    Leer_Habito()
+    ~~~~~~~~~~~^^
+  File "c:\Users\DELL\Desktop\MiniProyecto\app.py", line 26, in Leer_Habito
+    print("habito en Redist" + Habito)
+          ~~~~~~~~~~~~~~~~~~~^~~~~~~~
+ TypeError: can only concatenate str (not "dict") to str
+ Este era la linea de codigo:  print("habito en Redist" + Habito), el error pasaba porque no estaba especificado, que para imprimir no estaba en string
+ asi que solo se especico que era string quedando asi print("habito en Redist" + str(Habito))
+
+11.- Otro error que pasa es que las variables ingresadas no se guardan en TinyDB
+ Esto tuvo una solcuin sencilla que fue cambiar una cosa del parentesis (habit.id == habit_id) habit.id se cambio aa como estaba asignado en las comillas
+ quedo algo asi: (habit["Id de habito"] == habit_idt)
+
+12.-al momento de poner un guion o algun otro simbolo en el menu da el siguiente error:
+ Traceback (most recent call last):
+  File "c:\Users\DELL\Desktop\MiniProyecto\app.py", line 39, in <module>
+  Esto se soluciono cambiando solo a string la opcion:  "opcion = input("Selecciona cual va usar:")"
+
+13.-Al momento de actualizar el estatus dio el siguiente error:
+   File "c:\Users\DELL\Desktop\MiniProyecto\app.py", line 50, in <module>
+    Actualizar_Estado()
+    ~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\DELL\Desktop\MiniProyecto\app.py", line 18, in Actualizar_Estado
+    update_habit_status_t(Id_Habit,New_statust=Estatus_Nuevo)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ TypeError: update_habit_status_t() got an unexpected keyword argument 'New_statust'. Did you mean 'New_statut'?

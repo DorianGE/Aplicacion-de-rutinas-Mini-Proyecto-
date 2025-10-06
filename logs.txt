@@ -1,0 +1,101 @@
+[2025-10-05 22:01:12] [ERROR] Falló la instalación del cliente de Redis para Python:
+Error fatal en el lanzador: No se pudo crear el proceso usando '"C:\Users\DELL\AppData\Local\Programs\Python\Python313\python.exe" "C:\Users\DELL\AppData\Local\Programs\Python\Python313\Scripts\pip.exe" install redis'
+Causa: Instalación de Python rota o mal configurada.
+Acción tomada: Se reinstaló Python para corregir el problema.
+
+[2025-10-05 22:03:45] [INFO] Cliente de Redis instalado correctamente mediante:
+Comando: pip install redis
+
+[2025-10-05 22:04:10] [INFO] Comandos básicos usados en Redis para configurar hábitos:
+SET Nombre_Habito "Lavar trastes"
+SET Frecuencias "Usualmente"
+SET Estado "Pendiente"
+
+[2025-10-05 22:05:22] [INFO] Script de configuración de Redis:
+Estructura de datos:
+{
+  "Id del Habito": habit_id,
+  "Nombre del habito": habit_name,
+  "Frecuencia": frecuency,
+  "estado": status
+}
+
+[2025-10-05 22:06:01] [INFO] Función para actualizar estado en Redis:
+def update_habit_status(habit_id, New_status):
+    habit = read_habit(habit_id)
+    if habit:
+        habit["estado"] = New_status
+        client.set(f"habit:{habit_id}", json.dumps(habit))
+
+[2025-10-05 22:06:30] [INFO] Función para leer datos en Redis:
+def read_habit(habit_id):
+    data = client.get(f"habit:{habit_id}")
+    return json.loads(data) if data else None
+
+[2025-10-05 22:07:15] [INFO] Se instaló TinyDB:
+Comando: pip install tinydb
+
+[2025-10-05 22:08:00] [INFO] Configuración de TinyDB:
+Función para guardar:
+def save_habit_T(...)
+Función para leer:
+def read_habit_t(...)
+Función para actualizar:
+def update_habit_status_t(...)
+
+[2025-10-05 22:09:10] [INFO] Menú principal implementado con bucle while:
+Opciones:
+1. Crear un hábito
+2. Leer el hábito
+3. Actualizar estado
+4. Salir
+
+[2025-10-05 22:10:05] [INFO] Función para crear hábito:
+def Crear_habito():
+    Entradas: ID, Nombre, Frecuencia
+    Llama a: save_habit(), save_habit_T()
+
+[2025-10-05 22:10:45] [INFO] Función para actualizar estado:
+def Actualizar_Estado():
+    Entradas: ID, Nuevo estado
+    Llama a: update_habit_status(), update_habit_status_t()
+
+[2025-10-05 22:11:20] [INFO] Función para leer hábito:
+def Leer_Habito():
+    Entrada: ID
+    Llama a: read_habit(), read_habit_t()
+
+[2025-10-05 22:12:10] [ERROR] Error de tipo durante la creación de hábito:
+Traceback:
+ValueError: Invalid format specifier ' int' for object of type 'int'
+Causa: Formato incorrecto en f-string → `f"habit:{habit_id: int}"`
+Solución: Se corrigió a → `f"habit:{habit_id}"`
+
+[2025-10-05 22:13:05] [ERROR] Error de tipo al leer hábito:
+Traceback:
+TypeError: can only concatenate str (not "dict") to str
+Causa: Se intentó → `print("habito en Redist" + Habito)`
+Solución: Se corrigió a → `print("habito en Redist" + str(Habito))`
+
+[2025-10-05 22:14:00] [ERROR] Fallo en búsqueda de TinyDB:
+Causa: Nombre de campo incorrecto → `habit.id == habit_id`
+Solución: Se corrigió a → `habit["Id de habito"] == habit_idt`
+
+[2025-10-05 22:15:20] [ERROR] Fallo en el menú al ingresar símbolos:
+Causa: `int(input(...))` falla con entradas no numéricas
+Solución: Se cambió a → `opcion = input(...)` y se validó manualmente
+
+[2025-10-05 22:16:10] [ERROR] Argumento de palabra clave incorrecto:
+Traceback:
+TypeError: update_habit_status_t() got an unexpected keyword argument 'New_statust'
+Solución: Se corrigió el nombre del argumento para coincidir con la definición de la función
+
+[2025-10-05 23:35:42] [ERROR] Fallo al actualizar estado en TinyDB:
+Traceback:
+TypeError: 'bool' object is not callable
+Archivo: tinydb_setup.py
+Línea: 27
+Causa: Se usó una comparación inválida → ["Id de habito"] == habit_idt
+Motivo técnico: TinyDB esperaba una condición construida con Query(), pero recibió un valor booleano.
+Solución aplicada: Se corrigió la línea a → habit["Id de habito"] == habit_idt
+Resultado: El estado del hábito ahora se actualiza correctamente.
