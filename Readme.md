@@ -26,7 +26,10 @@ redis_setup <=== Archivo para ejecutar la logica o conexion para la base de dato
 
 tinydb_setup <== Archivo para ejecutar la logica o conexion para la base de datos de TinyDB ==>
 
+Enlaces:
+
 Enlace del Github = https://github.com/DorianGE/Aplicacion-de-rutinas-Mini-Proyecto-
 
-Enlace del video = (se actualizara el archivo con el video en el github)
+Enlace del video = https://www.youtube.com/watch?v=DGpWuPb506s
 
+Enlace del Redis = https://github.com/redis-windows/redis-windows/releases
